@@ -16,7 +16,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfigurationSource;
 
-import com.fhcs.clothing_store.security.filter.JwtAuthenticationFilter;
+import com.fhcs.clothing_store.infrastructure.in.rest.security.JwtAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
