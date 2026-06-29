@@ -1,15 +1,17 @@
 package com.fhcs.clothing_store.infrastructure.in.rest.dto.response.product.variation;
  
+import com.fhcs.clothing_store.infrastructure.in.rest.dto.response.product.ProductImageDto;
 import com.fhcs.clothing_store.infrastructure.out.persistence.entity.product.variation.ProductVariation;
 import lombok.Builder;
 import lombok.Getter;
- 
+
 import java.math.BigDecimal;
- 
+import java.util.List;
+
 @Builder
 @Getter
 public class ProductVariationDto {
- 
+
     private Integer variationId;
     private Integer productId;
     private String productName;
@@ -23,6 +25,7 @@ public class ProductVariationDto {
     private String skuCode;
     private Integer stock;
     private boolean inStock;
+    private List<ProductImageDto> images;
  
     public static ProductVariationDto fromVariation(ProductVariation v) {
         return ProductVariationDto.builder()
