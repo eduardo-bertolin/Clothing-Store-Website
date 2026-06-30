@@ -13,6 +13,7 @@ import com.fhcs.clothing_store.application.port.out.persistence.ImageRepositoryP
 import com.fhcs.clothing_store.core.domain.bo.image.ImageType;
 import com.fhcs.clothing_store.core.domain.bo.image.ProductImageBO;
 import com.fhcs.clothing_store.core.domain.bo.image.ProductImageRequestBO;
+import com.fhcs.clothing_store.core.domain.bo.image.ProductImageUpdateRequestBO;
 import com.fhcs.clothing_store.core.domain.bo.product.ProductBO;
 
 @Service
@@ -43,7 +44,59 @@ public class ImageUseCase implements ImageServicePort {
                 .saveAll(buildImageBOs(product, mainImageUrl, carouselImagesUrls));
 
         return saved;
+    }
 
+    @Override
+    public List<ProductImageBO> updateProductImages(ProductImageUpdateRequestBO request) {
+        ProductBO product = productServicePort.getProductById(request.getProductId());
+
+        deleteRemovedImages(request.getRemovedImageIds());
+        reorderExistingCarouselImages(request.getExistingCarouselIds());
+        replaceMainImageIfNeeded(product, request);
+        uploadNewCarouselImages(product, request);
+
+        return imageRepositoryPort.findByProductId(request.getProductId());
+    }
+
+    private void deleteRemovedImages(List<Integer> removedImageIds) {
+        if (removedImageIds == null || removedImageIds.isEmpty()) return;
+        removedImageIds.forEach(imageRepositoryPort::deleteById);
+    }
+
+    private void reorderExistingCarouselImages(List<Integer> existingCarouselIds) {
+        if (existingCarouselIds == null || existingCarouselIds.isEmpty()) return;
+        IntStream.range(0, existingCarouselIds.size()).forEach(i -> {
+            Integer imageId = existingCarouselIds.get(i);
+            imageRepositoryPort.findById(imageId).ifPresent(image -> {
+                image.setPosition(i + 1);
+                imageRepositoryPort.save(image);
+            });
+        });
+    }
+
+    private void replaceMainImageIfNeeded(ProductBO product, ProductImageUpdateRequestBO request) {
+        if (request.getNewMainImage() == null) return;
+
+        imageRepositoryPort.findByProductId(request.getProductId()).stream()
+                .filter(img -> ImageType.MAIN.equals(img.getType()))
+                .findFirst()
+                .ifPresent(existing -> imageRepositoryPort.deleteById(existing.getId()));
+
+        String newUrl = storagePort.uploadImage(request.getNewMainImage(), product.getProductId());
+        imageRepositoryPort.save(ProductImageBO.DRAFT(product, newUrl, ImageType.MAIN, 0));
+    }
+
+    private void uploadNewCarouselImages(ProductBO product, ProductImageUpdateRequestBO request) {
+        if (request.getNewCarouselImages() == null || request.getNewCarouselImages().isEmpty()) return;
+
+        int startPosition = request.getExistingCarouselIds() != null
+                ? request.getExistingCarouselIds().size() + 1
+                : 1;
+
+        for (int i = 0; i < request.getNewCarouselImages().size(); i++) {
+            String url = storagePort.uploadImage(request.getNewCarouselImages().get(i), product.getProductId());
+            imageRepositoryPort.save(ProductImageBO.DRAFT(product, url, ImageType.CAROUSEL, startPosition + i));
+        }
     }
 
     private List<ProductImageBO> buildImageBOs(ProductBO product, String mainImageUrl,

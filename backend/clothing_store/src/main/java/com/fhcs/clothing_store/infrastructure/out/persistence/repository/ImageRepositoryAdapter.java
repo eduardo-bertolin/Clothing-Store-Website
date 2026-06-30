@@ -1,6 +1,7 @@
 package com.fhcs.clothing_store.infrastructure.out.persistence.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
@@ -53,8 +54,18 @@ public class ImageRepositoryAdapter implements ImageRepositoryPort {
     }
 
     @Override
+    public Optional<ProductImageBO> findById(Integer id) {
+        return imageRepository.findById(id).map(mapper::toBO);
+    }
+
+    @Override
+    public ProductImageBO save(ProductImageBO image) {
+        return mapper.toBO(imageRepository.save(mapper.toEntity(image)));
+    }
+
+    @Override
     public void deleteById(Integer id) {
         imageRepository.deleteById(id);
     }
-    
+
 }

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,9 +24,11 @@ import com.fhcs.clothing_store.application.port.in.service.ImageServicePort;
 import com.fhcs.clothing_store.application.port.in.service.admin.AdminProductServicePort;
 import com.fhcs.clothing_store.core.domain.bo.image.ProductImageBO;
 import com.fhcs.clothing_store.core.domain.bo.image.ProductImageRequestBO;
+import com.fhcs.clothing_store.core.domain.bo.image.ProductImageUpdateRequestBO;
 import com.fhcs.clothing_store.core.domain.bo.product.ProductBO;
 import com.fhcs.clothing_store.infrastructure.in.rest.dto.ProductPatchDto;
 import com.fhcs.clothing_store.infrastructure.in.rest.dto.request.ProductImagesRequest;
+import com.fhcs.clothing_store.infrastructure.in.rest.dto.request.ProductImagesUpdateRequest;
 import com.fhcs.clothing_store.infrastructure.in.rest.dto.request.product.ProductRequest;
 import com.fhcs.clothing_store.infrastructure.in.rest.dto.response.product.ProductImageDto;
 import com.fhcs.clothing_store.infrastructure.in.rest.dto.response.product.ProductImageResponse;
@@ -136,6 +139,22 @@ public class AdminProductControllerAdapter {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(ProductImageResponse.error("Erro ao criar as imagens do produto"));
+        }
+    }
+
+    @PutMapping(value = "/{productId}/images", consumes = "multipart/form-data")
+    public ResponseEntity<ProductImageResponse> updateImages(
+            @PathVariable Integer productId,
+            @ModelAttribute ProductImagesUpdateRequest request) {
+        try {
+            ProductImageUpdateRequestBO bo = ProductImageRequestMapper.toUpdateBO(productId, request);
+            List<ProductImageBO> productImages = imageServicePort.updateProductImages(bo);
+
+            return ResponseEntity.ok(
+                    ProductImageResponse.success("Imagens do produto atualizadas com sucesso", productImages));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ProductImageResponse.error("Erro ao atualizar as imagens do produto"));
         }
     }
 }
