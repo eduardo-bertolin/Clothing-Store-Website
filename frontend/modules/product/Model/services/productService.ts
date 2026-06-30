@@ -5,6 +5,7 @@ import type { ProductRequest } from "@/modules/product/Model/models/productReque
 import { ProductImageRequest } from "../models/productImagesRequest";
 import { ProductImages } from "../models/productImages";
 import type { ProductVariationDto } from "../models/productVariationDto";
+import type { ProductImageUpdateRequest } from "../models/productImageUpdateRequest";
 
 export interface ProductPage {
   content: ProductVariationDto[];
@@ -55,6 +56,21 @@ export const productService = {
     formData.append('mainImage', request.mainImage);
     request.carouselImages.forEach(file => formData.append('carouselImages', file));
     const response = await api.post('/admin/products/images', formData, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+    });
+    return response.data.productImages;
+  },
+
+  async updateImages(request: ProductImageUpdateRequest): Promise<ProductImages[]> {
+    const token = tokenUtil.getAccessToken();
+    const formData = new FormData();
+    if (request.newMainImage) formData.append('newMainImage', request.newMainImage);
+    request.newCarouselImages.forEach(file => formData.append('newCarouselImages', file));
+    request.removedImageIds.forEach(id => formData.append('removedImageIds', String(id)));
+    request.existingCarouselIds.forEach(id => formData.append('existingCarouselIds', String(id)));
+    const response = await api.put(`/admin/products/${request.productId}/images`, formData, {
       headers: {
         Authorization: `Bearer ${token}`
       },
