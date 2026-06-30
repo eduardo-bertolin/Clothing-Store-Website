@@ -25,7 +25,7 @@ public class ProductImageDto {
                 .imageUrl(bo.getImageUrl())
                 .type(bo.getType())
                 .position(bo.getPosition())
-                .variationId(bo.getVariationBO() != null ? bo.getVariationBO().getVariationId() : null)
+                .variationId(bo.getVariation() != null ? bo.getVariation().getVariationId() : null)
                 .createdAt(bo.getCreatedAt())
                 .build();
     }

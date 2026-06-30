@@ -42,9 +42,9 @@ public class ProductImageEntityMapper {
             return null;
         ProductImage productImage = new ProductImage();
         productImage.setId(bo.getId());
-        productImage.setProduct(entityManager.getReference(Product.class, bo.getProductBO().getProductId()));
-        if (bo.getVariationBO() != null) {
-            productImage.setVariation(entityManager.getReference(ProductVariation.class, bo.getVariationBO().getVariationId()));
+        productImage.setProduct(entityManager.getReference(Product.class, bo.getProduct().getProductId()));
+        if (bo.getVariation() != null) {
+            productImage.setVariation(entityManager.getReference(ProductVariation.class, bo.getVariation().getVariationId()));
         }
         productImage.setImageUrl(bo.getImageUrl());
         productImage.setType(bo.getType());

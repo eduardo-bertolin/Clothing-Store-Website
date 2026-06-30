@@ -35,3 +35,5 @@ build/
 ### Ignore local configuration ###
 application-local.properties
 *.jar
+.env
+mysql-data/

@@ -53,8 +53,10 @@ public class AdminProductUseCase implements AdminProductServicePort {
 
     @Override
     public ProductBO getProductById(Integer productId) {
-        return productRepository.findById(productId)
+        ProductBO product = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Produto não encontrado."));
+        product.setImages(imageRepository.findByProductId(productId));
+        return product;
     }
 
     @Override
@@ -68,7 +70,7 @@ public class AdminProductUseCase implements AdminProductServicePort {
         Map<Integer, List<ProductImageBO>> imagesByProductId = imageRepository
                 .findByProductIds(productIds)
                 .stream()
-                .collect(Collectors.groupingBy(img -> img.getProductBO().getProductId()));
+                .collect(Collectors.groupingBy(img -> img.getProduct().getProductId()));
 
         products.forEach(product ->
                 product.setImages(imagesByProductId.getOrDefault(product.getProductId(), List.of())));

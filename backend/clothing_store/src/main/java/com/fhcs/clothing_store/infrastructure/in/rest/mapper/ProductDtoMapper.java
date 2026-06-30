@@ -14,7 +14,6 @@ import com.fhcs.clothing_store.infrastructure.in.rest.dto.response.product.Produ
 import com.fhcs.clothing_store.infrastructure.in.rest.dto.response.product.variation.ProductVariationDto;
 import com.fhcs.clothing_store.infrastructure.out.persistence.entity.product.Category;
 import com.fhcs.clothing_store.infrastructure.out.persistence.entity.product.Collection;
-import com.fhcs.clothing_store.infrastructure.out.persistence.entity.product.Product;
 
 @Component
 public class ProductDtoMapper {
@@ -64,12 +63,6 @@ public class ProductDtoMapper {
     }
 
     public ProductResponse toProductResponse(ProductBO bo, String message) {
-        Product p = new Product();
-        p.setProductId(bo.getProductId());
-        p.setName(bo.getName());
-        p.setDescription(bo.getDescription());
-        p.setPrice(bo.getPrice());
-        p.setScore(bo.getScore());
-        return ProductResponse.builder().success(true).message(message).product(p).build();
+        return ProductResponse.success(bo, message);
     }
 }

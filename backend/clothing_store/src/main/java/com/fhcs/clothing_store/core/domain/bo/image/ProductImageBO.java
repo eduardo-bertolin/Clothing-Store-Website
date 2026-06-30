@@ -2,6 +2,7 @@ package com.fhcs.clothing_store.core.domain.bo.image;
 
 import java.time.Instant;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fhcs.clothing_store.core.domain.bo.product.ProductBO;
 import com.fhcs.clothing_store.core.domain.bo.product.variation.ProductVariationBO;
 
@@ -19,7 +20,7 @@ public class ProductImageBO {
 
     public static ProductImageBO DRAFT(ProductBO product, String url, ImageType type, Integer posistion) {
         ProductImageBO imageBO = new ProductImageBO();
-        imageBO.setProductBO(product);
+        imageBO.setProduct(product);
         imageBO.setImageUrl(url);
         imageBO.setType(type);
         imageBO.setPosition(posistion);
@@ -32,7 +33,7 @@ public class ProductImageBO {
             Integer posistion, Instant createdAt) {
         ProductImageBO imageBO = new ProductImageBO();
         imageBO.setId(id);
-        imageBO.setProductBO(product);
+        imageBO.setProduct(product);
         imageBO.setImageUrl(url);
         imageBO.setType(type);
         imageBO.setPosition(posistion);
@@ -42,7 +43,7 @@ public class ProductImageBO {
     }
 
     public void assignToVariation(ProductVariationBO variationBO) {
-        setVariationBO(variationBO);
+        setVariation(variationBO);
     }
 
     public Integer getId() {
@@ -53,20 +54,22 @@ public class ProductImageBO {
         this.id = id;
     }
 
-    public ProductBO getProductBO() {
+    @JsonIgnore
+    public ProductBO getProduct() {
         return product;
     }
 
-    public void setProductBO(ProductBO product) {
+    public void setProduct(ProductBO product) {
         this.product = product;
     }
 
-    public ProductVariationBO getVariationBO() {
+    @JsonIgnore
+    public ProductVariationBO getVariation() {
         return variation;
     }
 
-    public void setVariationBO(ProductVariationBO variationId) {
-        this.variation = variationId;
+    public void setVariation(ProductVariationBO variation) {
+        this.variation = variation;
     }
 
     public String getImageUrl() {
