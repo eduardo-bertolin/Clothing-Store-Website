@@ -36,8 +36,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers("/api/auth/register", "/api/auth/login", "/api/auth/refresh").permitAll();
                     auth.requestMatchers("/api/catalog/**").permitAll();
-                    auth.requestMatchers("api/admin/**").hasAnyRole("ADMIN","SUPER_ADMIN");
-                    auth.requestMatchers("api/super-admin/**").hasRole("SUPER_ADMIN");
+                    auth.requestMatchers("/api/admin/**").hasAnyRole("ADMIN","SUPER_ADMIN");
+                    auth.requestMatchers("/api/super-admin/**").hasRole("SUPER_ADMIN");
                     auth.anyRequest().authenticated();
                 })
                 .httpBasic(Customizer.withDefaults())
